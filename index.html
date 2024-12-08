@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>故事转视频脚本系统</title>
+    
+    <!-- 预加载字体文件 -->
+    <link rel="preload" href="https://unpkg.com/element-ui/lib/theme-chalk/fonts/element-icons.woff" as="font" type="font/woff" crossorigin>
+    
+    <!-- 使用unpkg CDN -->
+    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+    <link rel="stylesheet" href="css/style.css">
+    
+    <!-- 使用unpkg CDN -->
+    <script src="https://unpkg.com/vue@2.6.14/dist/vue.min.js"></script>
+    <script src="https://unpkg.com/element-ui/lib/index.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/pptxgenjs@3.12.0/dist/pptxgen.bundle.js"></script>
+</head>
+<body>
+    <div id="app">
+        <el-container>
+            <el-header>
+                <div class="header-left">
+                    <el-button class="menu-btn" icon="el-icon-menu" @click="toggleMenu" v-show="isMobile"></el-button>
+                    <h1>故事转视频脚本系统</h1>
+                </div>
+                <div class="header-right">
+                    <el-button type="text" @click="showSettings" class="settings-btn">
+                        <i class="el-icon-setting"></i>
+                        <span class="btn-text">设置</span>
+                    </el-button>
+                </div>
+            </el-header>
+            
+            <el-container class="main-container">
+                <el-aside :class="{'is-open': isMenuOpen}">
+                    <el-menu :default-active="activeIndex" @select="handleSelect">
+                        <el-menu-item index="1">
+                            <i class="el-icon-folder"></i>
+                            <span>项目管理</span>
+                        </el-menu-item>
+                        <el-menu-item index="2">
+                            <i class="el-icon-edit-outline"></i>
+                            <span>故事输入</span>
+                        </el-menu-item>
+                        <el-menu-item index="3">
+                            <i class="el-icon-magic-stick"></i>
+                            <span>脚本生成</span>
+                        </el-menu-item>
+                        <el-menu-item index="4">
+                            <i class="el-icon-edit"></i>
+                            <span>脚本编辑</span>
+                        </el-menu-item>
+                        <el-menu-item index="5">
+                            <i class="el-icon-picture-outline"></i>
+                            <span>PPT导出</span>
+                        </el-menu-item>
+                    </el-menu>
+                </el-aside>
+                
+                <el-main>
+                    <!-- 项目管理模块 -->
+                    <div class="project-management-section" v-show="activeIndex === '1'">
+                        <el-card>
+                            <div slot="header" class="card-header">
+                                <div class="header-left">
+                                    <i class="el-icon-folder"></i>
+                                    <span class="title">项目管理</span>
+                                    <el-tag type="info" size="small">{{ projects.length }}个项目</el-tag>
+                                </div>
+                                <div class="header-right">
+                                    <el-button type="primary" size="small" @click="createNewProject" icon="el-icon-plus">
+                                        新建项目
+                                    </el-button>
+                                </div>
+                            </div>
+                            
+                            <!-- 项目列表 -->
+                            <div class="project-list" v-if="projects.length > 0">
+                                <el-table
+                                    :data="projects"
+                                    style="width: 100%"
+                                    :default-sort="{prop: 'lastModified', order: 'descending'}"
+                                    row-key="id"
+                                    :row-class-name="tableRowClassName">
+                                    <el-table-column
+                                        prop="title"
+                                        label="项目标题"
+                                        min-width="200"
+                                        sortable>
+                                        <template slot-scope="scope">
+                                            <div class="project-title">
+                                                <span class="title-text">{{ scope.row.title }}</span>
+                                                <el-tag 
+                                                    size="mini" 
+                                                    :type="getStatusType(scope.row)"
+                                                    class="status-tag">
+                                                    {{ scope.row.generating ? '生成中' : (scope.row.script ? '已完成' : '草稿') }}
+                                                </el-tag>
+                                            </div>
+                                            <div class="project-info" v-if="scope.row.content">
+                                                <span class="content-preview">{{ scope.row.content.substring(0, 50) }}...</span>
+                                            </div>
+                                        </template>
+                                    </el-table-column>
+                                    <el-table-column
+                                        prop="lastModified"
+                                        label="最后修改"
+                                        width="180"
+                                        sortable
+                                        :formatter="formatDate">
+                                    </el-table-column>
+                                    <el-table-column
+                                        label="操作"
+                                        width="320"
+                                        fixed="right">
+                                        <template slot-scope="scope">
+                                            <div class="action-buttons">
+                                                <el-tooltip content="编辑项目" placement="top" :open-delay="500">
+                                                    <el-button
+                                                        size="mini"
+                                                        @click="editProject(scope.row)"
+                                                        icon="el-icon-edit">
+                                                    </el-button>
+                                                </el-tooltip>
+                                                <el-tooltip content="生成脚本" placement="top" :open-delay="500">
+                                                    <el-button
+                                                        size="mini"
+                                                        type="primary"
+                                                        @click="generateScriptForProject(scope.row)"
+                                                        :loading="scope.row.generating"
+                                                        :disabled="!scope.row.content"
+                                                        icon="el-icon-magic-stick">
+                                                    </el-button>
+                                                </el-tooltip>
+                                                <el-tooltip content="导出PPT" placement="top" :open-delay="500">
+                                                    <el-button
+                                                        size="mini"
+                                                        type="success"
+                                                        @click="exportProjectPPT(scope.row)"
+                                                        :disabled="!scope.row.script"
+                                                        icon="el-icon-download">
+                                                    </el-button>
+                                                </el-tooltip>
+                                                <el-tooltip content="删除项目" placement="top" :open-delay="500">
+                                                    <el-button
+                                                        size="mini"
+                                                        type="danger"
+                                                        @click="deleteProject(scope.row)"
+                                                        icon="el-icon-delete">
+                                                    </el-button>
+                                                </el-tooltip>
+                                            </div>
+                                        </template>
+                                    </el-table-column>
+                                </el-table>
+                            </div>
+                            
+                            <!-- 空状态 -->
+                            <el-empty
+                                v-else
+                                description="暂无项目"
+                                :image-size="200">
+                                <el-button type="primary" @click="createNewProject">
+                                    立即创建
+                                </el-button>
+                            </el-empty>
+                        </el-card>
+                    </div>
+
+                    <!-- 故事输入模块 -->
+                    <div class="story-input-section" v-show="activeIndex === '2'">
+                        <el-card>
+                            <div slot="header">
+                                <span><i class="el-icon-edit-outline"></i> 故事输入</span>
+                            </div>
+                            <el-form>
+                                <el-form-item label="故事标题">
+                                    <el-input 
+                                        v-model="storyTitle"
+                                        placeholder="请输入故事标题"
+                                        :maxlength="50"
+                                        show-word-limit>
+                                    </el-input>
+                                </el-form-item>
+                                <el-form-item label="故事内容">
+                                    <el-input 
+                                        type="textarea"
+                                        v-model="storyContent"
+                                        placeholder="请输入故事内容"
+                                        :rows="10"
+                                        :maxlength="2000"
+                                        show-word-limit>
+                                    </el-input>
+                                </el-form-item>
+                                <el-form-item>
+                                    <el-button 
+                                        type="primary" 
+                                        @click="generateScriptForCurrentStory" 
+                                        :loading="loading"
+                                        icon="el-icon-magic-stick">
+                                        生成脚本
+                                    </el-button>
+                                    <el-button 
+                                        @click="saveProject"
+                                        icon="el-icon-document-add">
+                                        保存草稿
+                                    </el-button>
+                                </el-form-item>
+                            </el-form>
+                        </el-card>
+                    </div>
+
+                    <!-- 脚本展示模块 -->
+                    <div class="script-display-section" v-show="scriptContent">
+                        <el-card>
+                            <div slot="header">
+                                <span><i class="el-icon-document"></i> 生成的脚本</span>
+                            </div>
+                            <div class="script-content">
+                                <pre>{{ scriptContent }}</pre>
+                            </div>
+                            <div class="script-actions">
+                                <el-button 
+                                    type="success" 
+                                    @click="exportToPPT" 
+                                    :loading="exportLoading"
+                                    icon="el-icon-download">
+                                    导出PPT
+                                </el-button>
+                                <el-button 
+                                    type="primary" 
+                                    @click="editScript"
+                                    icon="el-icon-edit">
+                                    编辑脚本
+                                </el-button>
+                            </div>
+                        </el-card>
+                    </div>
+                </el-main>
+            </el-container>
+        </el-container>
+
+        <!-- API设置对话框 -->
+        <el-dialog 
+            title="系统设置" 
+            :visible.sync="settingsVisible" 
+            width="500px"
+            :close-on-click-modal="false">
+            <el-form label-width="120px">
+                <el-form-item label="API密钥">
+                    <el-input 
+                        v-model="apiSettings.apiKey" 
+                        type="password" 
+                        show-password
+                        placeholder="请输入DeepSeek API密钥">
+                    </el-input>
+                </el-form-item>
+                <el-form-item label="温度值">
+                    <el-slider 
+                        v-model="apiSettings.temperature" 
+                        :min="0" 
+                        :max="1" 
+                        :step="0.1">
+                    </el-slider>
+                </el-form-item>
+                <el-form-item label="最大输出长度">
+                    <el-input-number 
+                        v-model="apiSettings.maxTokens" 
+                        :min="100" 
+                        :max="4000" 
+                        :step="100">
+                    </el-input-number>
+                </el-form-item>
+            </el-form>
+            <span slot="footer" class="dialog-footer">
+                <el-button @click="settingsVisible = false">取消</el-button>
+                <el-button type="primary" @click="saveSettings">保存</el-button>
+            </span>
+        </el-dialog>
+
+        <!-- 添加项目编辑对话框 -->
+        <el-dialog
+            :title="currentProject ? '编辑项目' : '新建项目'"
+            :visible.sync="projectDialogVisible"
+            width="600px"
+            :close-on-click-modal="false">
+            <el-form :model="editingProject" label-width="100px">
+                <el-form-item label="项目标题" required>
+                    <el-input v-model="editingProject.title" placeholder="请输入项目标题"></el-input>
+                </el-form-item>
+                <el-form-item label="故事内容" required>
+                    <el-input
+                        type="textarea"
+                        v-model="editingProject.content"
+                        :rows="10"
+                        placeholder="请输入故事内容">
+                    </el-input>
+                </el-form-item>
+            </el-form>
+            <span slot="footer" class="dialog-footer">
+                <el-button @click="projectDialogVisible = false">取消</el-button>
+                <el-button type="primary" @click="saveProject">保存</el-button>
+            </span>
+        </el-dialog>
+
+        <!-- 遮罩层 -->
+        <div class="menu-overlay" v-if="isMenuOpen && isMobile" @click="toggleMenu"></div>
+    </div>
+
+    <script src="js/config.js"></script>
+    <script src="js/pptExport.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html> 
