@@ -83,11 +83,13 @@ class PPTExporter {
 
         // 创建场景列表
         const sceneTexts = scenes.map((scene, index) => ({
-            text: `${index + 1}. ${scene.description.substring(0, 50)}${scene.description.length > 50 ? '...' : ''}`,
+            text: `场景 ${index + 1}: ${scene.description.substring(0, 50)}${scene.description.length > 50 ? '...' : ''}\n` +
+                  `对白: ${scene.dialogue.substring(0, 50)}${scene.dialogue.length > 50 ? '...' : ''}`,
             options: {
                 fontSize: this.theme.body.fontSize,
                 color: this.theme.body.color,
-                bullet: { type: 'number', color: this.theme.accent.color }
+                bullet: { type: 'number', color: this.theme.accent.color },
+                breakLine: true
             }
         }));
 
@@ -174,7 +176,18 @@ class PPTExporter {
         const dialogue = scene.dialogue || '暂无对白';
         console.log('对白内容:', dialogue);
         
-        slide.addText(dialogue, {
+        // 创建格式化的对白内容
+        const formattedDialogue = dialogue.split('\n').map(line => ({
+            text: line,
+            options: {
+                ...this.theme.body,
+                breakLine: true,
+                bullet: line.includes('：') // 如果是人物对白就添加项目符号
+            }
+        }));
+
+        // 添加对白文本
+        slide.addText(formattedDialogue, {
             x: 0.5,
             y: 1.5,
             w: 9,
@@ -182,7 +195,7 @@ class PPTExporter {
             fontSize: this.theme.body.fontSize,
             color: this.theme.body.color,
             lineSpacing: 32,
-            breakLine: true
+            bullet: { indent: 10 }
         });
 
         // 添加时长和背景音乐信息
