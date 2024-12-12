@@ -242,6 +242,106 @@
             </el-container>
         </el-container>
 
+        <!-- 脚本编辑对话框 -->
+        <el-dialog 
+            title="编辑脚本" 
+            :visible.sync="scriptEditDialogVisible" 
+            width="90%"
+            :fullscreen="isMobile"
+            :close-on-click-modal="false"
+            custom-class="script-edit-dialog">
+            <div class="editor-toolbar">
+                <el-button-group>
+                    <el-tooltip content="撤销" placement="top">
+                        <el-button size="small" icon="el-icon-back" @click="handleUndo"></el-button>
+                    </el-tooltip>
+                    <el-tooltip content="重做" placement="top">
+                        <el-button size="small" icon="el-icon-right" @click="handleRedo"></el-button>
+                    </el-tooltip>
+                </el-button-group>
+
+                <el-divider direction="vertical"></el-divider>
+
+                <el-button-group>
+                    <el-tooltip content="查找/替换" placement="top">
+                        <el-button size="small" icon="el-icon-search" @click="toggleFindReplace"></el-button>
+                    </el-tooltip>
+                    <el-tooltip content="格式化" placement="top">
+                        <el-button size="small" icon="el-icon-magic-stick" @click="formatScript"></el-button>
+                    </el-tooltip>
+                    <el-tooltip content="预览PPT" placement="top">
+                        <el-button size="small" icon="el-icon-view" @click="generatePPTPreview"></el-button>
+                    </el-tooltip>
+                </el-button-group>
+
+                <el-divider direction="vertical"></el-divider>
+
+                <el-button-group>
+                    <el-tooltip content="字号调整" placement="top">
+                        <el-dropdown trigger="click" @command="handleFontSize">
+                            <el-button size="small">
+                                字号<i class="el-icon-arrow-down el-icon--right"></i>
+                            </el-button>
+                            <el-dropdown-menu slot="dropdown">
+                                <el-dropdown-item command="12">小</el-dropdown-item>
+                                <el-dropdown-item command="15">中</el-dropdown-item>
+                                <el-dropdown-item command="18">大</el-dropdown-item>
+                            </el-dropdown-menu>
+                        </el-dropdown>
+                    </el-tooltip>
+                </el-button-group>
+            </div>
+
+            <!-- 查找替换面板 -->
+            <div v-show="showFindReplace" class="find-replace-panel">
+                <el-row :gutter="10">
+                    <el-col :span="12">
+                        <el-input
+                            v-model="findText"
+                            size="small"
+                            placeholder="查找内容"
+                            clearable>
+                            <template slot="prepend">查找</template>
+                        </el-input>
+                    </el-col>
+                    <el-col :span="12">
+                        <el-input
+                            v-model="replaceText"
+                            size="small"
+                            placeholder="替换内容"
+                            clearable>
+                            <template slot="prepend">替换</template>
+                        </el-input>
+                    </el-col>
+                </el-row>
+                <div class="find-replace-actions">
+                    <el-button size="small" @click="findNext">查找下一个</el-button>
+                    <el-button size="small" @click="replace">替换</el-button>
+                    <el-button size="small" @click="replaceAll">全部替换</el-button>
+                </div>
+            </div>
+
+            <el-form class="editor-form">
+                <el-form-item>
+                    <el-input
+                        ref="scriptEditor"
+                        type="textarea"
+                        v-model="editingScript"
+                        :autosize="{ minRows: 20, maxRows: 50 }"
+                        placeholder="请编辑脚本内容"
+                        resize="none"
+                        @keydown.ctrl.z.prevent="handleUndo"
+                        @keydown.ctrl.y.prevent="handleRedo">
+                    </el-input>
+                </el-form-item>
+            </el-form>
+
+            <span slot="footer" class="dialog-footer">
+                <el-button @click="scriptEditDialogVisible = false">取消</el-button>
+                <el-button type="primary" @click="saveScriptEdit">保存</el-button>
+            </span>
+        </el-dialog>
+
         <!-- API设置对话框 -->
         <el-dialog 
             title="系统设置" 

@@ -164,7 +164,7 @@ body {
 /* 脚本内容样式 */
 .script-content {
     background-color: white;
-    padding: 20px;
+    padding: 30px;
     border-radius: 8px;
     margin-bottom: 20px;
     box-shadow: var(--box-shadow);
@@ -174,14 +174,31 @@ body {
     white-space: pre-wrap;
     word-wrap: break-word;
     margin: 0;
-    font-family: "Courier New", Courier, monospace;
-    line-height: 1.6;
+    font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
+    line-height: 1.8;
     color: var(--text-regular);
+    font-size: 15px;
+}
+
+/* 场景标题样式 */
+.script-content pre span:first-child {
+    font-size: 18px;
+    font-weight: bold;
+    color: var(--primary-color);
+    display: block;
+    margin-bottom: 10px;
+}
+
+/* 分隔线样式 */
+.script-content hr {
+    border: none;
+    border-top: 1px solid var(--border-color);
+    margin: 20px 0;
 }
 
 .script-actions {
     text-align: right;
-    padding-top: 15px;
+    padding-top: 20px;
     border-top: 1px solid var(--border-color);
 }
 
@@ -447,150 +464,639 @@ body {
 .project-management-section {
     max-width: 1200px;
     margin: 0 auto;
+    padding: 20px;
 }
 
 .card-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    margin-bottom: 20px;
 }
 
-.card-header .header-left {
+.header-left {
     display: flex;
     align-items: center;
     gap: 10px;
 }
 
-.card-header .title {
-    font-size: 16px;
+.header-left .title {
+    font-size: 18px;
     font-weight: 500;
-    margin-right: 10px;
+    color: var(--text-primary);
 }
 
 .project-list {
     margin-top: 20px;
 }
 
-/* 项目标题样式 */
-.project-title {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 4px;
-}
-
-.project-title .title-text {
-    font-weight: 500;
-    color: var(--text-primary);
-}
-
-.project-title .status-tag {
-    margin-left: auto;
-}
-
-.project-info {
-    font-size: 13px;
-    color: var(--text-secondary);
-}
-
-.content-preview {
-    display: -webkit-box;
-    -webkit-line-clamp: 1;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-/* 表格行样式 */
-.el-table .generating-row {
+/* 项目状态样式 */
+.generating-row {
     background-color: #fdf6ec !important;
 }
 
-.el-table .completed-row {
+.completed-row {
     background-color: #f0f9eb !important;
 }
 
-.el-table .draft-row {
+.draft-row {
     background-color: #ffffff !important;
 }
 
-/* 操作按钮组 */
-.action-buttons {
+/* 项目操作按钮样式 */
+.project-actions {
     display: flex;
     gap: 8px;
-    justify-content: flex-end;
 }
 
-.action-buttons .el-button {
-    padding: 7px;
+.project-actions .el-button {
+    padding: 5px 10px;
 }
 
-.action-buttons .el-button + .el-button {
-    margin-left: 0;
+/* 项目对话框样式 */
+.el-dialog__body {
+    padding: 20px 30px;
 }
 
-/* 表格样式优化 */
-.el-table {
-    border-radius: 8px;
-    overflow: hidden;
-    box-shadow: var(--box-shadow);
+.el-form-item__label {
+    font-weight: 500;
 }
 
-.el-table th {
-    background-color: #f5f7fa !important;
-    color: var(--text-regular);
-    font-weight: 600;
+.el-textarea__inner {
+    font-family: var(--font-family);
+    line-height: 1.6;
 }
 
-.el-table td, .el-table th {
-    padding: 12px !important;
-}
-
-.el-table--enable-row-hover .el-table__body tr:hover > td {
-    background-color: #f5f7fa !important;
-}
-
-/* 标签样式 */
-.el-tag {
-    border-radius: 4px;
-    padding: 0 8px;
-    height: 22px;
-    line-height: 20px;
-}
-
-.el-tag--mini {
-    height: 20px;
-    padding: 0 6px;
-    line-height: 18px;
-}
-
-/* 空状态样式 */
-.el-empty {
-    padding: 40px 0;
-}
-
-.el-empty__description {
-    margin-top: 20px;
-    color: var(--text-secondary);
-}
-
-/* 响应式调整 */
+/* 移动端适配 */
 @media screen and (max-width: 768px) {
     .project-management-section {
-        padding: 0 10px;
+        padding: 10px;
     }
 
-    .el-table .cell {
-        padding-left: 5px;
-        padding-right: 5px;
+    .card-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
     }
 
-    .action-buttons {
+    .header-right {
+        width: 100%;
+    }
+
+    .header-right .el-button {
+        width: 100%;
+    }
+
+    .project-actions {
         flex-wrap: wrap;
     }
 
-    .action-buttons .el-button {
-        flex: 1;
-        min-width: 60px;
+    .el-dialog {
+        width: 90% !important;
+        margin: 5vh auto !important;
     }
+}
+
+/* 脚本编辑对话框样式 */
+.script-edit-dialog {
+    display: flex;
+    flex-direction: column;
+}
+
+.script-edit-dialog.el-dialog {
+    margin-top: 2vh !important;
+    margin-bottom: 2vh !important;
+    height: 96vh !important;
+    display: flex;
+    flex-direction: column;
+}
+
+.script-edit-dialog .el-dialog__header {
+    padding: 15px 20px;
+}
+
+.script-edit-dialog .el-dialog__body {
+    flex: 1;
+    padding: 0;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    height: calc(96vh - 120px) !important;
+}
+
+.script-edit-dialog .editor-toolbar {
+    padding: 10px;
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background-color: #f5f7fa;
+    flex-shrink: 0;
+}
+
+.script-edit-dialog .find-replace-panel {
+    padding: 15px;
+    background-color: #f5f7fa;
+    border-bottom: 1px solid var(--border-color);
+    flex-shrink: 0;
+}
+
+.script-edit-dialog .editor-form {
+    flex: 1;
+    height: 100%;
+    margin: 0;
+    padding: 20px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+}
+
+.script-edit-dialog .el-form-item {
+    margin-bottom: 0;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+}
+
+.script-edit-dialog .el-form-item__content {
+    flex: 1;
+    height: 100%;
+    min-height: 0;
+}
+
+.script-edit-dialog .el-textarea {
+    height: 100%;
+}
+
+.script-edit-dialog .el-textarea__inner {
+    font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
+    line-height: 1.8;
+    padding: 15px;
+    height: 100% !important;
+    min-height: 0 !important;
+    resize: none;
+    font-size: 15px;
+}
+
+.script-edit-dialog .el-dialog__footer {
+    padding: 15px 20px;
+    border-top: 1px solid var(--border-color);
+    background-color: #f5f7fa;
+}
+
+/* 查找替换面板样式 */
+.find-replace-panel {
+    padding: 15px;
+    background-color: #f5f7fa;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.find-replace-panel .el-input-group__prepend {
+    min-width: 60px;
+    justify-content: center;
+}
+
+.find-replace-actions {
+    margin-top: 10px;
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+}
+
+/* 工具栏按钮样式 */
+.editor-toolbar .el-button-group {
+    margin-right: 5px;
+}
+
+.editor-toolbar .el-button--small {
+    padding: 8px 12px;
+}
+
+.editor-toolbar .el-divider--vertical {
+    margin: 0 10px;
+}
+
+/* 移动端适配 */
+@media screen and (max-width: 768px) {
+    .script-edit-dialog.el-dialog {
+        margin: 0 !important;
+        height: 100vh !important;
+    }
+
+    .script-edit-dialog .el-dialog__body {
+        height: calc(100vh - 120px) !important;
+    }
+
+    .script-edit-dialog .editor-toolbar {
+        padding: 5px;
+        flex-wrap: wrap;
+    }
+
+    .script-edit-dialog .find-replace-panel {
+        padding: 10px;
+    }
+
+    .script-edit-dialog .editor-form {
+        padding: 10px;
+    }
+}
+
+/* PPT预览样式 */
+.ppt-preview {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 9999;
+}
+
+.preview-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.preview-content {
+    position: absolute;
+    top: 2vh;
+    left: 2vw;
+    right: 2vw;
+    bottom: 2vh;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.preview-header {
+    padding: 15px 20px;
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #f5f7fa;
+}
+
+.preview-header h3 {
+    margin: 0;
+    font-size: 18px;
+    color: var(--text-primary);
+}
+
+.preview-close {
+    border: none;
+    background: none;
+    font-size: 24px;
+    color: #909399;
+    cursor: pointer;
+    padding: 0;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+}
+
+.preview-close:hover {
+    background-color: rgba(0, 0, 0, 0.1);
+    color: #606266;
+}
+
+.preview-body {
+    flex: 1;
+    padding: 20px;
+    overflow: hidden;
+}
+
+.preview-body iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+    background-color: white;
+}
+
+/* 移动端适配 */
+@media screen and (max-width: 768px) {
+    .preview-content {
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        border-radius: 0;
+    }
+
+    .preview-header {
+        padding: 10px 15px;
+    }
+
+    .preview-body {
+        padding: 10px;
+    }
+}
+
+/* AI建议对话框样式 */
+.ai-suggestion-dialog {
+    max-width: 95vw !important;
+    min-width: 1000px !important;
+}
+
+.ai-suggestion-dialog .el-dialog__body {
+    padding: 0;
+}
+
+.ai-suggestion-dialog .suggestion-header {
+    padding: 15px 20px;
+    background-color: #f5f7fa;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.ai-suggestion-dialog .suggestion-header p {
+    margin: 0;
+    color: var(--text-regular);
+    font-size: 14px;
+}
+
+.ai-suggestion-dialog .suggestion-content {
+    padding: 0;
+    height: 70vh;
+    overflow: hidden;
+}
+
+.ai-suggestion-dialog .content-comparison {
+    display: flex;
+    height: 100%;
+}
+
+.ai-suggestion-dialog .content-section {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    border-right: 1px solid var(--border-color);
+}
+
+.ai-suggestion-dialog .content-section:last-child {
+    border-right: none;
+}
+
+.ai-suggestion-dialog .section-header {
+    padding: 10px 15px;
+    background-color: #f5f7fa;
+    border-bottom: 1px solid var(--border-color);
+    font-weight: 500;
+    color: var(--text-primary);
+    font-size: 14px;
+}
+
+.ai-suggestion-dialog .section-body {
+    flex: 1;
+    padding: 15px;
+    overflow-y: auto;
+    font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
+    font-size: 14px;
+    line-height: 1.8;
+}
+
+/* 脚本内容样式 */
+.ai-suggestion-dialog .scene-title {
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--primary-color);
+    margin: 15px 0 10px;
+}
+
+.ai-suggestion-dialog .scene-title:first-child {
+    margin-top: 0;
+}
+
+.ai-suggestion-dialog .field-line {
+    margin: 5px 0;
+    padding: 3px 0;
+}
+
+.ai-suggestion-dialog .field-name {
+    color: #666;
+    font-weight: 500;
+    min-width: 80px;
+    display: inline-block;
+}
+
+.ai-suggestion-dialog .field-value {
+    color: var(--text-regular);
+}
+
+.ai-suggestion-dialog .scene-separator {
+    margin: 15px 0;
+    color: #ccc;
+    text-align: center;
+}
+
+.ai-suggestion-dialog .content-line {
+    margin: 5px 0;
+    color: var(--text-regular);
+}
+
+/* 高亮差异 */
+.ai-suggestion-dialog .content-section.enhanced .field-line {
+    background-color: #f0f9eb;
+    border-radius: 4px;
+}
+
+.ai-suggestion-dialog .content-section.enhanced .field-value {
+    color: #67c23a;
+}
+
+/* 移动端适配 */
+@media screen and (max-width: 768px) {
+    .ai-suggestion-dialog {
+        min-width: 100% !important;
+        margin: 0 !important;
+    }
+
+    .ai-suggestion-dialog .content-comparison {
+        flex-direction: column;
+    }
+
+    .ai-suggestion-dialog .content-section {
+        border-right: none;
+        border-bottom: 1px solid var(--border-color);
+        height: 50%;
+    }
+
+    .ai-suggestion-dialog .content-section:last-child {
+        border-bottom: none;
+    }
+
+    .ai-suggestion-dialog .section-body {
+        padding: 10px;
+        font-size: 13px;
+    }
+
+    .ai-suggestion-dialog .scene-title {
+        font-size: 15px;
+    }
+
+    .ai-suggestion-dialog .field-name {
+        min-width: 70px;
+    }
+}
+
+/* 脚本分析对话框样式 */
+.script-analysis-dialog {
+    max-width: 90vw !important;
+    min-width: 800px !important;
+}
+
+.script-analysis-dialog .el-dialog__body {
+    padding: 0;
+}
+
+.script-analysis-dialog .analysis-header {
+    padding: 15px 20px;
+    background-color: #f5f7fa;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.script-analysis-dialog .analysis-header p {
+    margin: 0;
+    color: var(--text-regular);
+    font-size: 14px;
+}
+
+.script-analysis-dialog .analysis-content {
+    padding: 20px;
+    max-height: 60vh;
+    overflow-y: auto;
+}
+
+.script-analysis-dialog .analysis-section {
+    background-color: #f5f7fa;
+    border-radius: 4px;
+    padding: 15px;
+}
+
+.script-analysis-dialog .analysis-section pre {
+    margin: 0;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
+    font-size: 14px;
+    line-height: 1.8;
+    color: var(--text-regular);
+}
+
+.script-analysis-dialog .analysis-footer {
+    padding: 15px 20px;
+    background-color: #f5f7fa;
+    border-top: 1px solid var(--border-color);
+}
+
+.script-analysis-dialog .analysis-footer p {
+    margin: 0;
+    color: var(--text-regular);
+    font-size: 14px;
+}
+
+/* 移动端适配 */
+@media screen and (max-width: 768px) {
+    .script-analysis-dialog {
+        min-width: 100% !important;
+        margin: 0 !important;
+    }
+
+    .script-analysis-dialog .analysis-content {
+        padding: 15px;
+        max-height: calc(100vh - 250px);
+    }
+
+    .script-analysis-dialog .analysis-section {
+        padding: 10px;
+    }
+
+    .script-analysis-dialog .analysis-section pre {
+        font-size: 13px;
+    }
+}
+
+.monaco-editor-container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.monaco-editor {
+    flex: 1;
+    width: 100%;
+    height: 100%;
+}
+
+/* 工具栏样式补充 */
+.editor-toolbar {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* 按钮动画效果 */
+.toolbar-btn {
+    position: relative;
+    overflow: hidden;
+}
+
+.toolbar-btn::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    background: rgba(255,255,255,0.2);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    transition: width 0.3s, height 0.3s;
+}
+
+.toolbar-btn:active::after {
+    width: 100px;
+    height: 100px;
+}
+
+/* 预览按钮特殊样式 */
+.preview-btn {
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 2px 4px rgba(64,158,255,0.2);
+}
+
+.preview-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+        90deg,
+        rgba(255,255,255,0) 0%,
+        rgba(255,255,255,0.2) 50%,
+        rgba(255,255,255,0) 100%
+    );
+    transition: left 0.5s;
+}
+
+.preview-btn:hover::before {
+    left: 100%;
 } 
